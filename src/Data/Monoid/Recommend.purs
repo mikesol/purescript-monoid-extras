@@ -26,13 +26,10 @@ module Data.Monoid.Recommend
        ) where
 
 -- #if __GLASGOW_HASKELL__ < 710
-import           Data.Foldable
-import           Data.Traversable
+import Data.Traversable (class Foldable, class Traversable, foldMapDefaultL, sequenceDefault)
 -- #endif
 
 -- import           Data.Data
-import           Data.Semigroup
-import           Data.Monoid
 import           Prelude
 -- | A value of type @Recommend a@ consists of a value of type @a@
 --   wrapped up in one of two constructors.  The @Recommend@
@@ -48,6 +45,16 @@ data Recommend a = Recommend a
 derive instance Eq a => Eq (Recommend a)
 derive instance Ord a => Ord (Recommend a)
 derive instance Functor Recommend
+instance Foldable Recommend where
+  foldr f b (Recommend a) = f a b
+  foldr f b (Commit a) = f a b
+  foldl f b (Recommend a) = f b a
+  foldl f b (Commit a) = f b a
+  foldMap = foldMapDefaultL
+instance Traversable Recommend where
+  traverse f (Recommend a) = Recommend <$> (f a)
+  traverse f (Commit a) = Commit <$> (f a)
+  sequence = sequenceDefault
 
 -- | Extract the value of type @a@ wrapped in @Recommend a@.
 getRecommend :: forall a. Recommend a -> a

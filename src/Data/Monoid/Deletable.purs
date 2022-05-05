@@ -26,10 +26,10 @@ module Data.Monoid.Deletable
 
 -- import Data.Data
 
-import Data.Foldable
-import Data.Semigroup
-import Data.Traversable
 import Prelude
+
+import Data.Foldable (class Foldable, foldMapDefaultL)
+import Data.Traversable (class Traversable, sequenceDefault)
 
 -- | If @m@ is a 'Monoid', then @Deletable m@ (intuitively speaking)
 --   adds two distinguished new elements @[@ and @]@, such that an
@@ -61,7 +61,14 @@ import Prelude
 data Deletable m = Deletable Int m Int
 --  deriving (Data, Typeable, Show, Read, Functor, Foldable, Traversable)
 
-derive instance Functor  Deletable
+derive instance Functor Deletable
+instance Foldable Deletable where
+  foldr f b (Deletable _ a _) = f a b
+  foldl f b (Deletable _ a _) = f b a
+  foldMap = foldMapDefaultL
+instance Traversable Deletable where
+  traverse f (Deletable x a y) = Deletable x <$> (f a) <@> y
+  sequence = sequenceDefault
 
 -- | Project the wrapped value out of a `Deletable` value.
 unDelete :: forall m. Deletable m -> m

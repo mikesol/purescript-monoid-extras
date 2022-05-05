@@ -138,7 +138,7 @@ newtype SM m = SM m
 --               deriving Show
 
 derive instance Generic (SM m) _
-instance Show m =>Show (SM m) where
+instance Show m => Show (SM m) where
   show = genericShow
 
 -- instance (Action (SM a) l2, Action l1 l2) => Action (a /\ l1) l2 where

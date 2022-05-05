@@ -34,11 +34,13 @@ module Data.Monoid.Split
 
 -- import Data.Data
 
-import Data.Monoid.Action (class Action, act)
 import Prelude
 
+import Data.Foldable (class Foldable, foldMapDefaultL)
 import Data.Generic.Rep (class Generic)
+import Data.Monoid.Action (class Action, act)
 import Data.Show.Generic (genericShow)
+import Data.Traversable (class Traversable, sequenceDefault)
 
 -- | A value of type @Split m@ is either a single @m@, or a pair of
 --   @m@'s separated by a divider.  Single @m@'s combine as usual;
@@ -60,8 +62,16 @@ derive instance Functor Split
 derive instance Generic (Split m) _
 instance Show m => Show (Split m) where
   show = genericShow
--- instance Foldable Split
--- instance Traversable Split
+instance Foldable Split where
+  foldr f b (M a) = f a b
+  foldr f b (Split a a') = f a' (f a b)
+  foldl f b (M a) = f b a
+  foldl f b (Split a a') = f (f b a) a'
+  foldMap = foldMapDefaultL
+instance Traversable Split where
+  traverse f (M a) = M <$> (f a)
+  traverse f (Split a a') = Split <$> (f a) <*> (f a')
+  sequence = sequenceDefault
 
 infix 5 Split as :|
 

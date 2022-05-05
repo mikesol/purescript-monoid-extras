@@ -26,6 +26,8 @@ module Data.Monoid.Cut
 
 import Prelude
 
+import Data.Traversable (class Foldable, class Traversable, foldMapDefaultL, sequenceDefault)
+
 -- infix 5 :||:
 
 -- | A value of type @Cut m@ is either a single @m@, or a pair of
@@ -47,6 +49,16 @@ data Cut m = Uncut m
 --  deriving (Data, Typeable, Show, Read, Functor, Foldable, Traversable)
 
 derive instance Functor Cut
+instance Foldable Cut where
+  foldr f b (Uncut a) = f a b
+  foldr f b (Cut a a') = f a' (f a b)
+  foldl f b (Uncut a) = f b a
+  foldl f b (Cut a a') = f (f b a) a'
+  foldMap = foldMapDefaultL
+instance Traversable Cut where
+  traverse f (Uncut a) = Uncut <$> (f a)
+  traverse f (Cut a a') = Cut <$> (f a) <*> (f a')
+  sequence = sequenceDefault
 
 infixl 5 Cut as :||:
 

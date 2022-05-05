@@ -36,8 +36,10 @@ module Data.Monoid.Inf
 
 import Prelude
 
+import Data.Foldable (class Foldable, foldMapDefaultL)
 import Data.Foldable as F
 import Data.Maybe (fromMaybe)
+import Data.Traversable (class Traversable, sequenceDefault)
 
 -- | Type index indicating positive infinity.
 data Pos
@@ -55,6 +57,16 @@ data Inf p a = Infinity | Finite a
 
 derive instance Eq a => Eq (Inf p a)
 derive instance Functor (Inf p)
+instance Foldable (Inf p) where
+  foldr f b (Finite a) = f a b
+  foldr _ b Infinity = b
+  foldl f b (Finite a) = f b a
+  foldl _ b Infinity = b
+  foldMap = foldMapDefaultL
+instance Traversable (Inf p) where
+  traverse f (Finite a) = Finite <$> (f a)
+  traverse _ Infinity = pure Infinity
+  sequence = sequenceDefault
 
 -- | The type 'a' extended with positive infinity.
 type PosInf a = Inf Pos a
