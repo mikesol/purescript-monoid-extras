@@ -1,0 +1,25 @@
+{
+  "name": "purescript-monoid-extras",
+  "version": "1.0.0",
+  "description": "[![Build Status](https://secure.travis-ci.org/diagrams/monoid-extras.png)](http://travis-ci.org/diagrams/monoid-extras)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diagrams/monoid-extras.git"
+  },
+  "keywords": [],
+  "author": "Mike Solomon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/diagrams/monoid-extras/issues"
+  },
+  "homepage": "https://github.com/diagrams/monoid-extras#readme",
+  "devDependencies": {
+    "purescript": "^0.15.0",
+    "purs-tidy": "^0.8.0",
+    "spago": "^0.20.9"
+  }
+}
