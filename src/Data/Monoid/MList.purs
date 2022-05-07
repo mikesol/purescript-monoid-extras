@@ -144,7 +144,7 @@ instance Show m => Show (SM m) where
 -- instance (Action (SM a) l2, Action l1 l2) => Action (a /\ l1) l2 where
 --   act (a /\ l) = act (SM a) <<< act l
 
-instance Action (SM a) Unit where
+instance Monoid (SM a) => Action (SM a) Unit where
   act _ _ = unit
 
 instance (Action a a', Action (SM a) l) => Action (SM a) (Maybe a' /\ l) where

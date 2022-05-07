@@ -56,7 +56,7 @@ import Data.Monoid.Endo (Endo(..))
 --   instance of the form @Action m SomeType@ since it will overlap
 --   with instances of the form @Action SomeMonoid t@.  Newtype
 --   wrappers can be used to (awkwardly) get around this.
-class Action m s where
+class Monoid m <= Action m s where
 
   -- | Convert a value of type @m@ to an action on @s@ values.
   act :: m -> s -> s

@@ -1,6 +1,6 @@
 {
   "name": "purescript-monoid-extras",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "[![Build Status](https://secure.travis-ci.org/diagrams/monoid-extras.png)](http://travis-ci.org/diagrams/monoid-extras)",
   "main": "index.js",
   "scripts": {

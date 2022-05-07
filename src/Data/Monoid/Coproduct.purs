@@ -33,10 +33,12 @@ module Data.Monoid.Coproduct
 
   ) where
 
-import Data.Maybe (Maybe(..))
-import Data.Monoid.Action (class Action, act)
 import Prelude
 
+import Data.Lens as L
+import Data.Maybe (Maybe(..))
+import Data.Monoid.Action (class Action, act)
+import Data.Tuple (fst, snd)
 import Data.Tuple.Nested (type (/\), (/\))
 
 -- | @m :+: n@ is the coproduct of monoids @m@ and @n@. Concatentation
@@ -112,23 +114,21 @@ untangle (C n m o) = (get m /\ get n')
 
 -- Lenses --------------------------------------------------------------
 
-type Lens s t a b = forall f. Functor f => (a -> f b) -> s -> f t
-
 -- | Lens onto the both @m@ and @n@.
-untangled :: forall m n m' n'. Action m n => Monoid m => Monoid n => Lens (m :+: n) (m' :+: n') (m /\ n) (m' /\ n')
-untangled f c = f (untangle c) <#> \(m' /\ n') -> C (Just n') (Just m') Nothing
+untangled :: forall m n m' n'. Action m n => Monoid m => Monoid n => L.Lens (m :+: n) (m' :+: n') (m /\ n) (m' /\ n')
+untangled = L.lens untangle (\(C _ _ _) (m /\ n) -> C (Just n) (Just m) Nothing)
 {-# INLINE untangled #-}
 -- this could be an iso if we depended on profunctors
 
 -- | Lens onto the left value of a coproduct.
-_L :: forall m n m'. Action m n => Monoid m => Semigroup n => Lens (m :+: n) (m' :+: n) m m'
-_L f (C n m o) = f (get m) <#> \m' -> C (n <> act' m o) (Just m') Nothing
+_L :: forall m n m'. Action m n => Monoid m => Monoid n => Semigroup n => L.Lens (m :+: n) (m' :+: n) m m'
+_L = L.lens (untangle >>> fst) (\(C n _ _) m -> C n (Just m) Nothing)
 {-# INLINE _L #-}
 -- this could be a prism if we depended on profunctors
 
 -- | Lens onto the right value of a coproduct.
-_R :: forall m n n'. Action m n => Monoid n => Lens (m :+: n) (m :+: n') n n'
-_R f (C n m o) = f (get $ n <> act' m o) <#> \n' -> C (Just n') m Nothing
+_R :: forall m n n'. Action m n => Monoid m => Monoid n => L.Lens (m :+: n) (m :+: n') n n'
+_R = L.lens (untangle >>> snd) (\(C _ m _) n -> C (Just n) m Nothing)
 {-# INLINE _R #-}
 
 -- Internal utilities --------------------------------------------------
