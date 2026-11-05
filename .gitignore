@@ -8,6 +8,7 @@
 /.purs*
 /.psa*
 /.spago
+/spago.lock
 /examples/**/index.js
 packages.json
 .#*.*
